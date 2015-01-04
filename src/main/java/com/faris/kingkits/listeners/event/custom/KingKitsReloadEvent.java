@@ -41,11 +41,13 @@ public class KingKitsReloadEvent extends Event {
 
     /**
      * Returns the player *
+     * @return 
      */
     public CommandSender getSender() {
         return this.theSender;
     }
 
+    @Override
     public HandlerList getHandlers() {
         return handlers;
     }

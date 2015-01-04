@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Permissions {
-    public List<Permission> permissionsList = new ArrayList<Permission>();
+    public List<Permission> permissionsList = new ArrayList<>();
 
     public Permission kitUseCommand = this.registerPermission(new Permission("kingkits.kit.use"));
     public Permission kitUseOtherCommand = this.registerPermission(new Permission("kingkits.kit.use.other"));
@@ -28,7 +28,7 @@ public class Permissions {
     public Permission cmdSetCooldown = this.registerPermission(new Permission("kingkits.command.setcooldown"));
 
     private Permission registerPermission(Permission permission) {
-        if (this.permissionsList == null) this.permissionsList = new ArrayList<Permission>();
+        if (this.permissionsList == null) this.permissionsList = new ArrayList<>();
         if (!this.permissionsList.contains(permission)) this.permissionsList.add(permission);
         return permission;
     }

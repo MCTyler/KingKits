@@ -19,10 +19,11 @@ import org.bukkit.scoreboard.Scoreboard;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import org.bukkit.command.CommandException;
 
 public class KingKitsCommand extends KingCommand {
 
-    private List<ConfigCommand> configCommands = new ArrayList<ConfigCommand>();
+    private final List<ConfigCommand> configCommands = new ArrayList<>();
 
     public KingKitsCommand(KingKits pluginInstance) {
         super(pluginInstance);
@@ -95,7 +96,7 @@ public class KingKitsCommand extends KingCommand {
                                     for (int i = 0; i < this.configCommands.size(); i++) {
                                         if (i == this.configCommands.size() - 1)
                                             configListBuilder.append(this.configCommands.get(i).getCommand());
-                                        else configListBuilder.append(this.configCommands.get(i).getCommand() + ", ");
+                                        else configListBuilder.append(this.configCommands.get(i).getCommand()).append(", ");
                                     }
                                     sender.sendMessage(ChatColor.GOLD + configListBuilder.toString().trim());
                                 } else {
@@ -183,8 +184,8 @@ public class KingKitsCommand extends KingCommand {
                         sender.sendMessage(ChatColor.RED + "Unknown KingKits command: " + ChatColor.DARK_RED + strCommand);
                     }
                 }
-            } catch (Exception ex) {
-                if (Math.random() < 0.25) ex.printStackTrace();
+            } catch (IllegalStateException | IllegalArgumentException | CommandException ex) {
+                if (Math.random() < 0.25);
             }
             return true;
         }
@@ -210,16 +211,21 @@ public class KingKitsCommand extends KingCommand {
 
     /**
      * Updates the config with the property key and value *
+     * @param config
+     * @param propertyKey
+     * @param propertyValue
+     * @return 
      */
     public String updateConfig(String config, String propertyKey, Object propertyValue) {
         try {
             String key = "";
             if (this.containsCommand(this.configCommands, propertyKey)) {
-                for (int i = 0; i < this.configCommands.size(); i++) {
-                    if (this.configCommands.get(i).getCommand().equalsIgnoreCase(propertyKey))
-                        key = this.configCommands.get(i).getDescription();
+                for (ConfigCommand configCommand : this.configCommands) {
+                    if (configCommand.getCommand().equalsIgnoreCase(propertyKey)) {
+                        key = configCommand.getDescription();
+                    }
                 }
-                if (key == "") return ChatColor.RED + "Failed to find the key '" + propertyKey + "' in the config.";
+                if ("".equals(key)) return ChatColor.RED + "Failed to find the key '" + propertyKey + "' in the config.";
             } else return ChatColor.RED + "Failed to find the key '" + propertyKey + "' in the config.";
             if (config.equalsIgnoreCase("Config")) {
                 String value = String.valueOf(propertyValue);
@@ -252,7 +258,7 @@ public class KingKitsCommand extends KingCommand {
 
             return ChatColor.GOLD + "Successfully updated " + propertyKey + " in the config.";
         } catch (Exception ex) {
-            if (Math.random() < 0.25) ex.printStackTrace();
+            if (Math.random() < 0.25);
             return ChatColor.RED + "Error: Couldn't update the config with the property.";
         }
     }

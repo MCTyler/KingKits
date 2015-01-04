@@ -38,6 +38,7 @@ import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 
 import java.util.ArrayList;
+import java.util.IllegalFormatException;
 import java.util.List;
 import java.util.Map;
 
@@ -46,6 +47,7 @@ public class PlayerListener implements Listener {
 
     /**
      * Create an instance PlayerListener *
+     * @param instance
      */
     public PlayerListener(KingKits instance) {
         this.plugin = instance;
@@ -53,6 +55,7 @@ public class PlayerListener implements Listener {
 
     /**
      * Register custom kill event *
+     * @param event
      */
     @EventHandler(priority = EventPriority.HIGHEST)
     public void registerKillEvent(PlayerDeathEvent event) {
@@ -69,6 +72,7 @@ public class PlayerListener implements Listener {
 
     /**
      * Lists all the available kits when a player joins *
+     * @param event
      */
     @EventHandler
     public void listKitsOnJoin(final PlayerJoinEvent event) {
@@ -86,6 +90,7 @@ public class PlayerListener implements Listener {
 
     private void listKitsOnJoin(final Player p) {
         p.getServer().getScheduler().runTaskLater(this.getPlugin(), new Runnable() {
+            @Override
             public void run() {
                 if (p != null && p.isOnline()) {
                     List<String> kitList = getPlugin().getKitList();
@@ -110,7 +115,7 @@ public class PlayerListener implements Listener {
                             }
                         }
                     }
-                    if (sbKits.toString() == ChatColor.GREEN + "") {
+                    if (sbKits.toString() == null ? ChatColor.GREEN + "" == null : sbKits.toString().equals(ChatColor.GREEN + "")) {
                         sbKits = new StringBuilder().append(ChatColor.RED).append("No kits available");
                     }
                     p.sendMessage(ChatColor.GOLD + "PvP Kits: " + sbKits.toString());
@@ -120,6 +125,7 @@ public class PlayerListener implements Listener {
     }
 
     /**
+     * @param event
      * Lets players create a sign kit *
      */
     @EventHandler
@@ -156,12 +162,12 @@ public class PlayerListener implements Listener {
                 }
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
         }
     }
 
     /**
      * Lets players use sign kits *
+     * @param event
      */
     @EventHandler
     public void changeKits(PlayerInteractEvent event) {
@@ -253,12 +259,12 @@ public class PlayerListener implements Listener {
                 }
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
         }
     }
 
     /**
      * Remove a player's kit when they die *
+     * @param event
      */
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
@@ -282,12 +288,12 @@ public class PlayerListener implements Listener {
                     player.removePotionEffect(activeEffect.getType());
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
         }
     }
 
     /**
      * Remove a player's kit when they leave *
+     * @param event
      */
     @EventHandler
     public void removeKitOnQuit(PlayerQuitEvent event) {
@@ -312,12 +318,12 @@ public class PlayerListener implements Listener {
                 guiPreviewKit.closeMenu(true, true);
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
         }
     }
 
     /**
      * Remove a player's kit when they get kicked *
+     * @param event
      */
     @EventHandler(ignoreCancelled = true)
     public void removeKitOnKick(PlayerKickEvent event) {
@@ -338,12 +344,12 @@ public class PlayerListener implements Listener {
             if (this.getPlugin().usingKits.containsKey(player.getName()))
                 this.getPlugin().usingKits.remove(player.getName());
         } catch (Exception ex) {
-            ex.printStackTrace();
         }
     }
 
     /**
      * Bans item dropping *
+     * @param event
      */
     @SuppressWarnings("deprecation")
     @EventHandler
@@ -384,6 +390,7 @@ public class PlayerListener implements Listener {
 
     /**
      * Bans item picking *
+     * @param event
      */
     @EventHandler
     public void banPickupItem(PlayerPickupItemEvent event) {
@@ -413,6 +420,7 @@ public class PlayerListener implements Listener {
 
     /**
      * Adds score to a player every time they kill another player *
+     * @param event
      */
     @EventHandler
     public void addScore(PlayerDeathEvent event) {
@@ -454,6 +462,7 @@ public class PlayerListener implements Listener {
 
     /**
      * Makes players have a chat prefix with their score *
+     * @param event
      */
     @EventHandler(ignoreCancelled = true)
     public void scoreChat(AsyncPlayerChatEvent event) {
@@ -469,12 +478,13 @@ public class PlayerListener implements Listener {
                     event.setFormat(Utils.replaceChatColour(this.getPlugin().configValues.scoreFormat).replace("<score>", String.valueOf(this.getPlugin().playerScores.get(player.getUniqueId()))) + ChatColor.WHITE + " " + event.getFormat());
                 }
             }
-        } catch (Exception ex) {
+        } catch (IllegalFormatException | NullPointerException ex) {
         }
     }
 
     /**
      * Removes potion effects of a player when they leave *
+     * @param event
      */
     @EventHandler
     public void leaveRemovePotionEffects(PlayerQuitEvent event) {
@@ -499,6 +509,7 @@ public class PlayerListener implements Listener {
 
     /**
      * Removes potion effects of a player when they get kicked *
+     * @param event
      */
     @EventHandler(ignoreCancelled = true)
     public void kickRemovePotionEffects(PlayerKickEvent event) {
@@ -522,6 +533,7 @@ public class PlayerListener implements Listener {
 
     /**
      * Makes it so when you right click with a compass, you track the nearest player *
+     * @param event
      */
     @EventHandler
     public void rightClickCompass(PlayerInteractEvent event) {
@@ -571,6 +583,7 @@ public class PlayerListener implements Listener {
 
     /**
      * Makes compass trackers track the new location of their target *
+     * @param event
      */
     @EventHandler(ignoreCancelled = true)
     public void compassTrackMove(PlayerMoveEvent event) {
@@ -601,6 +614,7 @@ public class PlayerListener implements Listener {
 
     /**
      * Makes compass trackers lose their target when they get leave or their target leaves *
+     * @param event
      */
     @EventHandler
     public void compassTrackerLeave(PlayerQuitEvent event) {
@@ -633,6 +647,7 @@ public class PlayerListener implements Listener {
 
     /**
      * Makes compass trackers lose their target when they get kicked or their target gets kicked *
+     * @param event
      */
     @EventHandler(ignoreCancelled = true)
     public void compassTrackerKick(PlayerKickEvent event) {
@@ -665,6 +680,7 @@ public class PlayerListener implements Listener {
 
     /**
      * Allows players to right click with soup and instantly drink it to be healed or fed *
+     * @param event
      */
     @EventHandler
     public void quickSoup(PlayerInteractEvent event) {
@@ -720,6 +736,7 @@ public class PlayerListener implements Listener {
 
     /**
      * Disables block breaking *
+     * @param event
      */
     @EventHandler(ignoreCancelled = true)
     public void disableBlockBreaking(BlockBreakEvent event) {
@@ -769,6 +786,7 @@ public class PlayerListener implements Listener {
 
     /**
      * Disables block placing *
+     * @param event
      */
     @EventHandler(ignoreCancelled = true)
     public void disableBlockPlacing(BlockPlaceEvent event) {
@@ -788,6 +806,7 @@ public class PlayerListener implements Listener {
 
     /**
      * Disables minecraft death messages *
+     * @param event
      */
     @EventHandler
     public void disableDeathMessages(PlayerDeathEvent event) {
@@ -804,6 +823,7 @@ public class PlayerListener implements Listener {
 
     /**
      * Locks hunger bars so players can't lose hunger *
+     * @param event
      */
     @EventHandler
     public void lockHunger(FoodLevelChangeEvent event) {
@@ -822,6 +842,7 @@ public class PlayerListener implements Listener {
 
     /**
      * Gives a player money when they kill another player *
+     * @param event
      */
     @EventHandler
     public void moneyPerKill(PlayerKilledEvent event) {
@@ -841,6 +862,7 @@ public class PlayerListener implements Listener {
 
     /**
      * Takes money from a player when they die by another player *
+     * @param event
      */
     @EventHandler
     public void moneyPerDeath(PlayerDeathEvent event) {
@@ -862,6 +884,7 @@ public class PlayerListener implements Listener {
 
     /**
      * Do stuff when the player changes worlds.
+     * @param event
      */
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onWorldChange(PlayerChangedWorldEvent event) {
@@ -893,6 +916,7 @@ public class PlayerListener implements Listener {
 
     /**
      * Disables gamemode changes while using a kit *
+     * @param event
      */
     @EventHandler(ignoreCancelled = true)
     public void disableGamemode(PlayerGameModeChangeEvent event) {
@@ -910,6 +934,7 @@ public class PlayerListener implements Listener {
 
     /**
      * Update killstreaks and runs commands (if they exist in the configuration) when a player kills another player *
+     * @param event
      */
     @EventHandler
     public void updateKillstreak(PlayerKilledEvent event) {
@@ -949,6 +974,7 @@ public class PlayerListener implements Listener {
 
     /**
      * Update killstreaks when a player dies *
+     * @param event
      */
     @EventHandler
     public void removeKillstreakOnDeath(PlayerDeathEvent event) {
@@ -964,6 +990,7 @@ public class PlayerListener implements Listener {
 
     /**
      * Update killstreaks when a player leaves *
+     * @param event
      */
     @EventHandler
     public void removeKillstreakOnLeave(PlayerQuitEvent event) {
@@ -977,6 +1004,7 @@ public class PlayerListener implements Listener {
 
     /**
      * Update killstreaks when a player gets kicked *
+     * @param event
      */
     @EventHandler(ignoreCancelled = true)
     public void removeKillstreakOnKick(PlayerKickEvent event) {
@@ -990,6 +1018,7 @@ public class PlayerListener implements Listener {
 
     /**
      * Make weapons unbreakable *
+     * @param event
      */
     @EventHandler(ignoreCancelled = true)
     public void noWeaponBreakDamage(EntityDamageByEntityEvent event) {
@@ -1054,6 +1083,7 @@ public class PlayerListener implements Listener {
 
     /**
      * Make bows unbreakable *
+     * @param event
      */
     @EventHandler(ignoreCancelled = true)
     public void noWeaponBreakDamage(EntityShootBowEvent event) {
@@ -1080,6 +1110,7 @@ public class PlayerListener implements Listener {
 
     /**
      * Make items unbreakable *
+     * @param event
      */
     @EventHandler(ignoreCancelled = true)
     public void noWeaponBreakDamage(PlayerInteractEvent event) {
@@ -1111,6 +1142,7 @@ public class PlayerListener implements Listener {
                 final Player player = event.getPlayer();
                 player.getServer().getScheduler().runTaskLater(this.getPlugin(), new Runnable() {
                     @SuppressWarnings("deprecation")
+                    @Override
                     public void run() {
                         if (player != null && player.isOnline()) {
                             if (!GuiKingKits.guiKitMenuMap.containsKey(player.getName()) && !GuiKingKits.guiPreviewKitMap.containsKey(player.getName())) {
@@ -1140,7 +1172,7 @@ public class PlayerListener implements Listener {
                     event.getPlayer().setScoreboard(playerBoard);
                 }
             }
-        } catch (Exception ex) {
+        } catch (IllegalArgumentException | IllegalStateException ex) {
         }
     }
 
@@ -1159,7 +1191,7 @@ public class PlayerListener implements Listener {
                     event.getPlayer().setScoreboard(playerBoard);
                 }
             }
-        } catch (Exception ex) {
+        } catch (IllegalArgumentException | IllegalStateException ex) {
         }
     }
 
@@ -1172,7 +1204,7 @@ public class PlayerListener implements Listener {
                     event.getPlayer().setScoreboard(event.getPlayer().getServer().getScoreboardManager().getNewScoreboard());
                 }
             }
-        } catch (Exception ex) {
+        } catch (IllegalArgumentException | IllegalStateException ex) {
         }
     }
 
@@ -1192,9 +1224,11 @@ public class PlayerListener implements Listener {
 
     /**
      * Returns a list of lower case strings *
+     * @param originalMap
+     * @return 
      */
     public static List<String> listToLowerCase(List<String> originalMap) {
-        List<String> newMap = new ArrayList<String>();
+        List<String> newMap = new ArrayList<>();
         for (String s : originalMap)
             newMap.add(s.toLowerCase());
         return newMap;

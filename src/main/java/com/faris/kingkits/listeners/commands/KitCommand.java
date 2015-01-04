@@ -32,7 +32,7 @@ public class KitCommand extends KingCommand {
                         if (args.length == 0) {
                             if (sender.hasPermission(this.getPlugin().permissions.kitList)) {
                                 if (this.isConsole(sender) || (!this.getPlugin().configValues.kitListMode.equalsIgnoreCase("Gui") && !this.getPlugin().configValues.kitListMode.equalsIgnoreCase("Menu"))) {
-                                    List<String> kitList = new ArrayList<String>(this.getPlugin().kitList.keySet());
+                                    List<String> kitList = new ArrayList<>(this.getPlugin().kitList.keySet());
                                     sender.sendMessage(r("&aKits List (" + kitList.size() + "):"));
                                     if (!kitList.isEmpty()) {
                                         if (this.getPlugin().configValues.sortAlphabetically) Collections.sort(kitList, Utils.ALPHABETICAL_ORDER);
@@ -91,7 +91,6 @@ public class KitCommand extends KingCommand {
                                         SetKit.setKingKit(player, kitName, true);
                                     }
                                 } catch (Exception ex) {
-                                    ex.printStackTrace();
                                 }
                             } else {
                                 sender.sendMessage(ChatColor.RED + "You must be a player to use this command.");
@@ -109,7 +108,6 @@ public class KitCommand extends KingCommand {
                                     try {
                                         SetKit.setKit(target, kitName, false);
                                     } catch (Exception ex) {
-                                        ex.printStackTrace();
                                         sender.sendMessage(ChatColor.RED + "An error occurred.");
                                         return true;
                                     }

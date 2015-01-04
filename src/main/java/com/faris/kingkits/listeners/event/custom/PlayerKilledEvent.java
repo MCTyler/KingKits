@@ -14,16 +14,19 @@ public class PlayerKilledEvent extends PlayerEvent {
 		this.theDead = dead;
 	}
 
-	/** Returns the dead player **/
+	/** Returns the dead player
+     * @return  **/
 	public Player getDead() {
 		return this.theDead;
 	}
 
-	/** Returns the killer **/
+	/** Returns the killer
+     * @return  **/
 	public Player getKiller() {
 		return this.getPlayer();
 	}
 
+        @Override
 	public HandlerList getHandlers() {
 		return handlers;
 	}

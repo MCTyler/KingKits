@@ -14,10 +14,10 @@ public class PlayerKitEvent extends PlayerEvent implements Cancellable {
 
     private String kitName = "";
     private String oldKit = "";
-    private Map<Integer, ItemStack> kitContents = new HashMap<Integer, ItemStack>();
-    private List<ItemStack> armourItems = new ArrayList<ItemStack>();
-    private List<PotionEffect> potionEffects = new ArrayList<PotionEffect>();
-    private List<String> kitCommands = new ArrayList<String>();
+    private Map<Integer, ItemStack> kitContents = new HashMap<>();
+    private List<ItemStack> armourItems = new ArrayList<>();
+    private List<PotionEffect> potionEffects = new ArrayList<>();
+    private List<String> kitCommands = new ArrayList<>();
 
     private boolean isCancelled = false;
 
@@ -70,6 +70,7 @@ public class PlayerKitEvent extends PlayerEvent implements Cancellable {
      * @param oldKit - The previous kit the player was.
      * @param newKitItems - The kit items.
      * @param armourItems - The kit's armour items.
+     * @param potionEffects
      */
     public PlayerKitEvent(Player player, String kitName, String oldKit, Map<Integer, ItemStack> newKitItems, List<ItemStack> armourItems, List<PotionEffect> potionEffects) {
         super(player);
@@ -105,7 +106,7 @@ public class PlayerKitEvent extends PlayerEvent implements Cancellable {
      * @return An unmodifiable List of items in the kit.
      */
     public List<ItemStack> getKitContents() {
-        return new ArrayList<ItemStack>(this.kitContents.values());
+        return new ArrayList<>(this.kitContents.values());
     }
 
     /**
@@ -135,6 +136,7 @@ public class PlayerKitEvent extends PlayerEvent implements Cancellable {
 
     /**
      * Set the armour contents in the kit *
+     * @param armourContents
      */
     public void setKitArmour(List<ItemStack> armourContents) {
         this.armourItems = armourContents != null ? armourContents : new ArrayList<ItemStack>();
@@ -142,9 +144,10 @@ public class PlayerKitEvent extends PlayerEvent implements Cancellable {
 
     /**
      * Set the item contents of the kit *
+     * @param kitContents
      */
     public void setKitContents(List<ItemStack> kitContents) {
-        this.kitContents = new HashMap<Integer, ItemStack>();
+        this.kitContents = new HashMap<>();
         if (kitContents != null) {
             for (int i = 0; i < kitContents.size(); i++) {
                 ItemStack kitContent = kitContents.get(i);
@@ -155,6 +158,7 @@ public class PlayerKitEvent extends PlayerEvent implements Cancellable {
 
     /**
      * Set the item contents of the kit *
+     * @param kitContents
      */
     public void setKitContents(Map<Integer, ItemStack> kitContents) {
         this.kitContents = kitContents != null ? kitContents : new HashMap<Integer, ItemStack>();
@@ -162,11 +166,13 @@ public class PlayerKitEvent extends PlayerEvent implements Cancellable {
 
     /**
      * Set the potion effects gained when using the kit *
+     * @param potionEffects
      */
     public void setPotionEffects(List<PotionEffect> potionEffects) {
         this.potionEffects = potionEffects != null ? potionEffects : new ArrayList<PotionEffect>();
     }
 
+    @Override
     public HandlerList getHandlers() {
         return handlers;
     }

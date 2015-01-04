@@ -24,13 +24,13 @@ public class Kit implements Iterable<ItemStack>, ConfigurationSerializable {
     private double kitCost = 0D;
     private long kitCooldown = 0;
 
-    private List<String> kitCommands = new ArrayList<String>();
+    private List<String> kitCommands = new ArrayList<>();
 
     private ItemStack guiItem = null;
-    private Map<Integer, ItemStack> kitItems = new HashMap<Integer, ItemStack>();
-    private List<ItemStack> kitArmour = new ArrayList<ItemStack>();
-    private List<PotionEffect> potionEffects = new ArrayList<PotionEffect>();
-    private Map<Long, List<String>> killstreakCommands = new HashMap<Long, List<String>>();
+    private Map<Integer, ItemStack> kitItems = new HashMap<>();
+    private List<ItemStack> kitArmour = new ArrayList<>();
+    private List<PotionEffect> potionEffects = new ArrayList<>();
+    private Map<Long, List<String>> killstreakCommands = new HashMap<>();
 
     private boolean itemBreaking = true;
 
@@ -115,7 +115,7 @@ public class Kit implements Iterable<ItemStack>, ConfigurationSerializable {
 
     private int getFreeSlot() {
         for (int i = 0; i < 36; i++) {
-            if (!this.kitItems.containsKey(new Integer(i))) return i;
+            if (!this.kitItems.containsKey(i)) return i;
         }
         return this.kitItems.size() + 1;
     }
@@ -125,7 +125,7 @@ public class Kit implements Iterable<ItemStack>, ConfigurationSerializable {
     }
 
     public List<ItemStack> getItems() {
-        return new ArrayList<ItemStack>(this.kitItems.values());
+        return new ArrayList<>(this.kitItems.values());
     }
 
     public Map<Integer, ItemStack> getItemsWithSlot() {
@@ -137,7 +137,7 @@ public class Kit implements Iterable<ItemStack>, ConfigurationSerializable {
     }
 
     public List<ItemStack> getMergedItems() {
-        List<ItemStack> kitItems = new ArrayList<ItemStack>(this.kitItems.values());
+        List<ItemStack> kitItems = new ArrayList<>(this.kitItems.values());
         kitItems.addAll(this.kitArmour);
         return Collections.unmodifiableList(kitItems);
     }
@@ -197,7 +197,7 @@ public class Kit implements Iterable<ItemStack>, ConfigurationSerializable {
 
     public Kit setItems(List<ItemStack> items) {
         if (items != null) {
-            this.kitItems = new HashMap<Integer, ItemStack>();
+            this.kitItems = new HashMap<>();
             for (int i = 0; i < items.size(); i++) {
                 this.kitItems.put(i, items.get(i));
             }
@@ -237,7 +237,7 @@ public class Kit implements Iterable<ItemStack>, ConfigurationSerializable {
     @SuppressWarnings("deprecation")
     @Override
     public Map<String, Object> serialize() {
-        Map<String, Object> serializedKit = new HashMap<String, Object>();
+        Map<String, Object> serializedKit = new HashMap<>();
         serializedKit.put("Name", this.kitName != null ? this.kitName : "Kit" + new Random().nextInt());
         serializedKit.put("Cost", this.kitCost);
         serializedKit.put("Cooldown", this.kitCooldown);
@@ -246,7 +246,7 @@ public class Kit implements Iterable<ItemStack>, ConfigurationSerializable {
 
         /** GUI Item **/
         if (this.guiItem != null) {
-            Map<String, Object> guiItemMap = new HashMap<String, Object>();
+            Map<String, Object> guiItemMap = new HashMap<>();
             guiItemMap.put("Type", this.guiItem.getType().toString());
             guiItemMap.put("Amount", this.guiItem.getAmount());
             guiItemMap.put("Data", this.guiItem.getDurability());
@@ -260,7 +260,7 @@ public class Kit implements Iterable<ItemStack>, ConfigurationSerializable {
                 if (skullMeta.getOwner() != null) guiItemMap.put("Skin", skullMeta.getOwner());
             }
             // Enchantments
-            Map<String, Integer> enchantmentMap = new HashMap<String, Integer>();
+            Map<String, Integer> enchantmentMap = new HashMap<>();
             for (Map.Entry<Enchantment, Integer> entrySet : this.guiItem.getEnchantments().entrySet())
                 enchantmentMap.put(entrySet.getKey().getName(), entrySet.getValue());
             if (!enchantmentMap.isEmpty()) guiItemMap.put("Enchantments", enchantmentMap);
@@ -272,11 +272,11 @@ public class Kit implements Iterable<ItemStack>, ConfigurationSerializable {
 
         /** Items **/
         if (this.kitItems != null && !this.kitItems.isEmpty()) {
-            Map<String, Object> itemsMap = new HashMap<String, Object>();
+            Map<String, Object> itemsMap = new HashMap<>();
             for (int i = 0; i < 36; i++) {
                 ItemStack kitItem = this.kitItems.size() > i ? this.kitItems.get(i) : null;
                 if (kitItem != null && kitItem.getType() != Material.AIR) {
-                    Map<String, Object> kitItemMap = new LinkedHashMap<String, Object>();
+                    Map<String, Object> kitItemMap = new LinkedHashMap<>();
                     kitItemMap.put("Type", kitItem.getType().toString());
                     String itemName = kitItem.hasItemMeta() && kitItem.getItemMeta().hasDisplayName() ? kitItem.getItemMeta().getDisplayName() : null;
                     if (itemName != null) kitItemMap.put("Name", Utils.replaceBukkitColour(itemName));
@@ -289,7 +289,7 @@ public class Kit implements Iterable<ItemStack>, ConfigurationSerializable {
                         SkullMeta skullMeta = (SkullMeta) kitItem.getItemMeta();
                         if (skullMeta.getOwner() != null) kitItemMap.put("Skin", skullMeta.getOwner());
                     }
-                    Map<String, Integer> enchantmentMap = new HashMap<String, Integer>();
+                    Map<String, Integer> enchantmentMap = new HashMap<>();
                     for (Map.Entry<Enchantment, Integer> entrySet : kitItem.getEnchantments().entrySet())
                         enchantmentMap.put(entrySet.getKey().getName(), entrySet.getValue());
                     if (!enchantmentMap.isEmpty()) kitItemMap.put("Enchantments", enchantmentMap);
@@ -303,10 +303,10 @@ public class Kit implements Iterable<ItemStack>, ConfigurationSerializable {
 
         /** Armour **/
         if (this.kitArmour != null && !this.kitArmour.isEmpty()) {
-            Map<String, Object> armourMap = new HashMap<String, Object>();
+            Map<String, Object> armourMap = new HashMap<>();
             for (ItemStack kitArmour : this.kitArmour) {
                 if (kitArmour != null) {
-                    Map<String, Object> kitArmourMap = new HashMap<String, Object>();
+                    Map<String, Object> kitArmourMap = new HashMap<>();
                     String armourName = kitArmour.hasItemMeta() && kitArmour.getItemMeta().hasDisplayName() ? kitArmour.getItemMeta().getDisplayName() : null;
                     if (armourName != null) kitArmourMap.put("Name", Utils.replaceBukkitColour(armourName));
                     kitArmourMap.put("Type", kitArmour.getType().toString());
@@ -318,7 +318,7 @@ public class Kit implements Iterable<ItemStack>, ConfigurationSerializable {
                         SkullMeta skullMeta = (SkullMeta) kitArmour.getItemMeta();
                         if (skullMeta.getOwner() != null) kitArmourMap.put("Skin", skullMeta.getOwner());
                     }
-                    Map<String, Integer> enchantmentMap = new HashMap<String, Integer>();
+                    Map<String, Integer> enchantmentMap = new HashMap<>();
                     for (Map.Entry<Enchantment, Integer> entrySet : kitArmour.getEnchantments().entrySet())
                         enchantmentMap.put(entrySet.getKey().getName(), entrySet.getValue());
                     if (!enchantmentMap.isEmpty()) kitArmourMap.put("Enchantments", enchantmentMap);
@@ -334,9 +334,9 @@ public class Kit implements Iterable<ItemStack>, ConfigurationSerializable {
 
         /** Potion Effects **/
         if (this.potionEffects != null && !this.potionEffects.isEmpty()) {
-            Map<String, Object> potionEffectsMap = new HashMap<String, Object>();
+            Map<String, Object> potionEffectsMap = new HashMap<>();
             for (PotionEffect potionEffect : this.potionEffects) {
-                Map<String, Integer> potionEffectMap = new HashMap<String, Integer>();
+                Map<String, Integer> potionEffectMap = new HashMap<>();
                 potionEffectMap.put("Level", potionEffect.getAmplifier() + 1);
                 potionEffectMap.put("Duration", potionEffect.getDuration() / 20);
                 potionEffectsMap.put(WordUtils.capitalizeFully(potionEffect.getType().getName().toLowerCase().replace("_", " ")), potionEffectMap);
@@ -345,7 +345,7 @@ public class Kit implements Iterable<ItemStack>, ConfigurationSerializable {
         }
 
         if (this.killstreakCommands != null && !this.killstreakCommands.isEmpty()) {
-            Map<String, Object> killstreakCmds = new HashMap<String, Object>();
+            Map<String, Object> killstreakCmds = new HashMap<>();
             for (Map.Entry<Long, List<String>> killstreakEntry : this.killstreakCommands.entrySet()) {
                 if (killstreakEntry.getValue() != null && !killstreakEntry.getValue().isEmpty()) {
                     killstreakCmds.put("Killstreak " + killstreakEntry.getKey(), killstreakEntry.getValue());
@@ -497,7 +497,7 @@ public class Kit implements Iterable<ItemStack>, ConfigurationSerializable {
                 }
                 if (kitSection.containsKey("Armour")) {
                     Map<String, Object> armourItemsMap = getValues(kitSection, "Armour");
-                    List<ItemStack> kitArmour = new ArrayList<ItemStack>();
+                    List<ItemStack> kitArmour = new ArrayList<>();
                     for (Map.Entry<String, Object> entrySet : armourItemsMap.entrySet()) {
                         Map<String, Object> kitMap = getValues(entrySet);
                         String strType = getObject(kitMap, "Type", String.class);
@@ -555,7 +555,7 @@ public class Kit implements Iterable<ItemStack>, ConfigurationSerializable {
                     kit.setArmour(kitArmour);
                 }
                 if (kitSection.containsKey("Potion Effects")) {
-                    List<PotionEffect> potionEffectList = new ArrayList<PotionEffect>();
+                    List<PotionEffect> potionEffectList = new ArrayList<>();
                     Map<String, Object> potionEffectsMap = getValues(kitSection, "Potion Effects");
                     if (potionEffectsMap != null) {
                         for (Map.Entry<String, Object> potionEntrySet : potionEffectsMap.entrySet()) {
@@ -576,7 +576,7 @@ public class Kit implements Iterable<ItemStack>, ConfigurationSerializable {
                     }
                 }
                 if (kitSection.containsKey("Killstreaks")) {
-                    Map<Long, List<String>> killstreakCmds = new HashMap<Long, List<String>>();
+                    Map<Long, List<String>> killstreakCmds = new HashMap<>();
                     Map<String, Object> killstreakMap = getValues(kitSection, "Killstreaks");
                     if (killstreakMap != null) {
                         for (Map.Entry<String, Object> killstreakEntry : killstreakMap.entrySet()) {
@@ -589,7 +589,6 @@ public class Kit implements Iterable<ItemStack>, ConfigurationSerializable {
                                             List<String> cmds = (List<String>) killstreakEntry.getValue();
                                             if (cmds != null && !cmds.isEmpty()) killstreakCmds.put(killstreak, cmds);
                                         } catch (Exception ex) {
-                                            continue;
                                         }
                                     }
                                 }
@@ -598,8 +597,7 @@ public class Kit implements Iterable<ItemStack>, ConfigurationSerializable {
                         kit.setKillstreaks(killstreakCmds);
                     }
                 }
-            } catch (Exception ex) {
-                ex.printStackTrace();
+            } catch (ClassCastException | IllegalArgumentException ex) {
             }
         }
         return kit;

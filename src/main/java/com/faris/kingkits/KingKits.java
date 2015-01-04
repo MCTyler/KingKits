@@ -55,11 +55,11 @@ public class KingKits extends JavaPlugin {
     public Vault vault = new Vault(this);
 
     // Plugin Variables
-    public Map<String, String> usingKits = new HashMap<String, String>();
-    public Map<String, String> playerKits = new HashMap<String, String>();
-    public Map<UUID, Object> playerScores = new HashMap<UUID, Object>();
-    public Map<Player, Player> compassTargets = new HashMap<Player, Player>();
-    public Map<String, Long> playerKillstreaks = new HashMap<String, Long>();
+    public Map<String, String> usingKits = new HashMap<>();
+    public Map<String, String> playerKits = new HashMap<>();
+    public Map<UUID, Object> playerScores = new HashMap<>();
+    public Map<Player, Player> compassTargets = new HashMap<>();
+    public Map<String, Long> playerKillstreaks = new HashMap<>();
 
     // Listeners
     private PlayerListener pListener = null;
@@ -70,9 +70,10 @@ public class KingKits extends JavaPlugin {
     private RenameKitCommand cmdKitR = null;
     private RefillCommand cmdRefill = null;
 
-    public Map<String, Kit> kitList = new HashMap<String, Kit>();
+    public Map<String, Kit> kitList = new HashMap<>();
     private int cooldownTaskID = -1;
 
+    @Override
     public void onEnable() {
         pluginInstance = this;
 
@@ -89,12 +90,10 @@ public class KingKits extends JavaPlugin {
         try {
             this.loadConfiguration();
         } catch (Exception ex) {
-            ex.printStackTrace();
         }
         try {
             Lang.init(this);
         } catch (Exception ex) {
-            ex.printStackTrace();
         }
 
         this.pListener = new PlayerListener(this);
@@ -130,14 +129,14 @@ public class KingKits extends JavaPlugin {
                     String titleSpace = "                                            ";
                     this.getLogger().info(title);
                     try {
-                        this.getLogger().info(titleSpace.substring(0, titleSpace.length() / 2 - "KingKits".length() + 3) + "KingKits" + titleSpace.substring(0, titleSpace.length() / 2 - "KingKits".length()));
+                        this.getLogger().log(Level.INFO, "{0}KingKits{1}", new Object[]{titleSpace.substring(0, titleSpace.length() / 2 - "KingKits".length() + 3), titleSpace.substring(0, titleSpace.length() / 2 - "KingKits".length())});
                     } catch (Exception ex) {
                         this.getServer().getConsoleSender().sendMessage("KingKits");
                     }
                     this.getLogger().info(title);
-                    this.getLogger().info("A new version is available: KingKits v" + updater.getVersion());
-                    this.getLogger().info("Your current version: KingKits v" + this.getDescription().getVersion());
-                    this.getLogger().info((this.configValues.automaticUpdates ? "Automatic updates do not work for Spigot. " : "") + "Download it from: http://www.spigotmc.org/threads/kingkits.37947");
+                    this.getLogger().log(Level.INFO, "A new version is available: KingKits v{0}", updater.getVersion());
+                    this.getLogger().log(Level.INFO, "Your current version: KingKits v{0}", this.getDescription().getVersion());
+                    this.getLogger().log(Level.INFO, "{0}Download it from: http://www.spigotmc.org/threads/kingkits.37947", (this.configValues.automaticUpdates ? "Automatic updates do not work for Spigot. " : ""));
                 }
             } else {
                 BukkitUpdater updater = new BukkitUpdater(this, 56371, this.getFile(), BukkitUpdater.UpdateType.NO_DOWNLOAD, false);
@@ -146,15 +145,15 @@ public class KingKits extends JavaPlugin {
                     String titleSpace = "                                            ";
                     this.getLogger().info(title);
                     try {
-                        this.getLogger().info(titleSpace.substring(0, titleSpace.length() / 2 - "KingKits".length() + 3) + "KingKits" + titleSpace.substring(0, titleSpace.length() / 2 - "KingKits".length()));
+                        this.getLogger().log(Level.INFO, "{0}KingKits{1}", new Object[]{titleSpace.substring(0, titleSpace.length() / 2 - "KingKits".length() + 3), titleSpace.substring(0, titleSpace.length() / 2 - "KingKits".length())});
                     } catch (Exception ex) {
                         this.getServer().getConsoleSender().sendMessage("KingKits");
                     }
                     this.getLogger().info(title);
-                    this.getLogger().info("A new version is available: " + updater.getLatestName());
-                    this.getLogger().info("Your current version: KingKits v" + this.getDescription().getVersion());
+                    this.getLogger().log(Level.INFO, "A new version is available: {0}", updater.getLatestName());
+                    this.getLogger().log(Level.INFO, "Your current version: KingKits v{0}", this.getDescription().getVersion());
                     if (this.configValues.automaticUpdates) {
-                        this.getLogger().info("Downloading " + updater.getLatestName() + "...");
+                        this.getLogger().log(Level.INFO, "Downloading {0}...", updater.getLatestName());
                         updater = new BukkitUpdater(this, 56371, this.getFile(), BukkitUpdater.UpdateType.NO_VERSION_CHECK, false);
                         BukkitUpdater.UpdateResult updateResult = updater.getResult();
                         if (updateResult == BukkitUpdater.UpdateResult.FAIL_APIKEY)
@@ -167,7 +166,7 @@ public class KingKits extends JavaPlugin {
                             this.getLogger().warning("Download failed: The latest version has an incorrect title.");
                         else this.getLogger().info("The latest version of KingKits has been downloaded.");
                     } else {
-                        this.getLogger().info("Download it from: " + updater.getLatestFileLink());
+                        this.getLogger().log(Level.INFO, "Download it from: {0}", updater.getLatestFileLink());
                     }
                 }
             }
@@ -176,11 +175,11 @@ public class KingKits extends JavaPlugin {
         try {
             new Metrics(this).start();
         } catch (Exception ex) {
-            this.getLogger().warning("Could not start metrics due to a(n) " + ex.getClass().getSimpleName() + " error.");
-            ex.printStackTrace();
+            this.getLogger().log(Level.WARNING, "Could not start metrics due to a(n) {0} error.", ex.getClass().getSimpleName());
         }
     }
 
+    @Override
     public void onDisable() {
         if (this.cooldownTaskID != -1) this.getServer().getScheduler().cancelTask(this.cooldownTaskID);
 
@@ -389,6 +388,7 @@ public class KingKits extends JavaPlugin {
 
             if (this.configValues.kitCooldown) {
                 this.cooldownTaskID = this.getServer().getScheduler().runTaskTimer(this, new Runnable() {
+                    @Override
                     public void run() {
                         boolean hasBeenModified = false;
                         for (Map.Entry<String, Object> configEntrySet : getCooldownConfig().getValues(false).entrySet()) {
@@ -420,7 +420,7 @@ public class KingKits extends JavaPlugin {
                     }
                 }, 1200L, 1200L).getTaskId();
             }
-        } catch (Exception ex) {
+        } catch (IllegalArgumentException | IllegalStateException ex) {
             throw ex;
         }
     }
@@ -440,7 +440,7 @@ public class KingKits extends JavaPlugin {
             this.getKitsConfig().addDefault("First run", true);
             if (this.getKitsConfig().getBoolean("First run")) {
                 Kit defaultKit = new Kit("Default").setRealName("Default").setCommands(Arrays.asList("feed <player>", "tell <player> &6You have been fed for using the default kit."));
-                List<ItemStack> defaultKitItems = new ArrayList<ItemStack>(), defaultKitArmour = new ArrayList<ItemStack>();
+                List<ItemStack> defaultKitItems = new ArrayList<>(), defaultKitArmour = new ArrayList<>();
 
                 ItemStack defaultSword = new ItemStack(Material.IRON_SWORD);
                 defaultSword.addEnchantment(Enchantment.DURABILITY, 3);
@@ -475,23 +475,21 @@ public class KingKits extends JavaPlugin {
                         kit = Kit.deserialize((Map<String, Object>) objKitConfigSection);
                     if (kit != null) this.kitList.put(kitName, kit.setRealName(kitName));
                     else
-                        this.getLogger().warning("Could not register the kit '" + kitName + "' it has been invalidly defined in the configuration.");
-                } catch (Exception ex) {
-                    this.getLogger().warning("Could not register the kit '" + kitName + "' due to a(n) " + ex.getClass().getSimpleName() + " error:");
-                    ex.printStackTrace();
+                        this.getLogger().log(Level.WARNING, "Could not register the kit ''{0}'' it has been invalidly defined in the configuration.", kitName);
+                } catch (NullPointerException | ClassCastException ex) {
+                    this.getLogger().log(Level.WARNING, "Could not register the kit ''{0}'' due to a(n) {1} error:", new Object[]{kitName, ex.getClass().getSimpleName()});
                 }
             }
 
             this.setupPermissions(true);
         } catch (Exception ex) {
-            ex.printStackTrace();
         }
     }
 
     private void loadScores() {
         try {
             this.getScoresConfig().options().header("KingKits Score Configuration");
-            Map<String, Integer> scores = new HashMap<String, Integer>();
+            Map<String, Integer> scores = new HashMap<>();
             scores.put("Player1", 2);
             if (!this.getScoresConfig().contains("Scores")) this.getScoresConfig().createSection("Scores", scores);
             this.getScoresConfig().options().copyDefaults(true);
@@ -499,7 +497,7 @@ public class KingKits extends JavaPlugin {
             this.saveScoresConfig();
 
             Map<String, Object> scoresMap = this.getScoresConfig().getConfigurationSection("Scores").getValues(true);
-            List<String> unconvertedScores = new ArrayList<String>();
+            List<String> unconvertedScores = new ArrayList<>();
             for (Entry<String, Object> scoreEntry : scoresMap.entrySet()) {
                 if (!Utils.isUUID(scoreEntry.getKey())) unconvertedScores.add(scoreEntry.getKey());
             }
@@ -512,7 +510,6 @@ public class KingKits extends JavaPlugin {
                 }
                 hasConverted = true;
             } catch (Exception ex) {
-                ex.printStackTrace();
                 hasConverted = false;
             }
             for (String unconvertedPlayer : unconvertedScores) {
@@ -522,13 +519,12 @@ public class KingKits extends JavaPlugin {
                 }
             }
             this.saveScoresConfig();
-            this.playerScores = new HashMap<UUID, Object>();
+            this.playerScores = new HashMap<>();
             for (Entry<String, Object> mapEntry : scoresMap.entrySet()) {
                 if (Utils.isUUID(mapEntry.getKey()))
                     this.playerScores.put(UUID.fromString(mapEntry.getKey()), mapEntry.getValue());
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
         }
     }
 
@@ -615,9 +611,8 @@ public class KingKits extends JavaPlugin {
     private void setupPermissions(boolean unregisterFirst) {
         if (unregisterFirst) {
             try {
-                List<String> kitNames = new ArrayList<String>(this.getKitsConfig().getKeys(false));
-                for (int pos = 0; pos < kitNames.size(); pos++) {
-                    String kit = kitNames.get(pos);
+                List<String> kitNames = new ArrayList<>(this.getKitsConfig().getKeys(false));
+                for (String kit : kitNames) {
                     if (kit.split(" ").length > 1) kit = kit.split(" ")[0];
                     try {
                         this.getServer().getPluginManager().removePermission(new Permission("kingkits.kits." + kit.toLowerCase()));
@@ -628,14 +623,13 @@ public class KingKits extends JavaPlugin {
             }
         }
         try {
-            List<String> kitNames = new ArrayList<String>(this.getKitsConfig().getKeys(false));
-            for (int pos = 0; pos < kitNames.size(); pos++) {
-                String kit = kitNames.get(pos);
+            List<String> kitNames = new ArrayList<>(this.getKitsConfig().getKeys(false));
+            for (String kit : kitNames) {
                 if (kit.split(" ").length > 1) kit = kit.split(" ")[0];
                 try {
                     this.getServer().getPluginManager().addPermission(new Permission("kingkits.kits." + kit.toLowerCase()));
                 } catch (Exception ex) {
-                    this.getLogger().info("Couldn't register the permission node: " + "kingkits.kits." + kit.toLowerCase());
+                    this.getLogger().log(Level.INFO,"Couldn''t register the permission node: " + "kingkits.kits.{0}", kit.toLowerCase());
                     this.getLogger().info("This error probably occurred because it's already registered.");
                 }
             }
@@ -658,7 +652,7 @@ public class KingKits extends JavaPlugin {
     }
 
     public List<String> getConfigKitList() {
-        List<String> configKeys = new ArrayList<String>(this.getKitsConfig().getKeys(false));
+        List<String> configKeys = new ArrayList<>(this.getKitsConfig().getKeys(false));
         configKeys.remove("First run");
         return configKeys;
     }
@@ -681,7 +675,7 @@ public class KingKits extends JavaPlugin {
     }
 
     public Map<String, Long> getCooldowns(String playerName) {
-        Map<String, Long> kitCooldowns = new HashMap<String, Long>();
+        Map<String, Long> kitCooldowns = new HashMap<>();
         if (playerName != null && this.getCooldownConfig().contains(playerName)) {
             Object objCooldownPlayer = this.getCooldownConfig().get(playerName);
             Map<String, Object> configKitCooldowns = objCooldownPlayer instanceof ConfigurationSection ? ((ConfigurationSection) objCooldownPlayer).getValues(false) : (objCooldownPlayer instanceof Map ? (Map) objCooldownPlayer : new HashMap<String, Object>());
@@ -699,7 +693,7 @@ public class KingKits extends JavaPlugin {
     }
 
     public List<String> getKitList() {
-        return new ArrayList<String>(this.kitList.keySet());
+        return new ArrayList<>(this.kitList.keySet());
     }
 
     public String getMPKMessage(Player killer, double amount) {
@@ -946,7 +940,7 @@ public class KingKits extends JavaPlugin {
                 for (String kitName : kitList) {
                     if (oldKitsFileConfig.contains(kitName)) {
                         Kit kit = new Kit(kitName).setRealName(kitName);
-                        List<ItemStack> kitItems = new ArrayList<ItemStack>(), kitArmour = new ArrayList<ItemStack>();
+                        List<ItemStack> kitItems = new ArrayList<>(), kitArmour = new ArrayList<>();
                         List<String> strKitItems = oldKitsFileConfig.getStringList(kitName);
                         for (String strKitItem : strKitItems) {
                             String[] kitSplit = strKitItem.contains(" ") ? strKitItem.split(" ") : null;
@@ -962,7 +956,7 @@ public class KingKits extends JavaPlugin {
                                             if (kitSplit.length > 3) {
                                                 StringBuilder sbKitItemName = new StringBuilder();
                                                 for (int kitSplitIndex = 3; kitSplitIndex < kitSplit.length; kitSplitIndex++) {
-                                                    sbKitItemName.append(kitSplit[kitSplitIndex] + " ");
+                                                    StringBuilder append = sbKitItemName.append(kitSplit[kitSplitIndex]).append(" ");
                                                 }
                                                 String kitItemName = sbKitItemName.toString().trim();
                                                 if (!kitItemName.isEmpty()) {
@@ -1028,7 +1022,6 @@ public class KingKits extends JavaPlugin {
                                                 }
                                             }
                                         } catch (Exception ex) {
-                                            continue;
                                         }
                                     }
                                 }
@@ -1045,7 +1038,7 @@ public class KingKits extends JavaPlugin {
                             }
                         }
                         if (oldPotionsFileConfig.contains(kitName)) {
-                            List<PotionEffect> kitPotionEffects = new ArrayList<PotionEffect>();
+                            List<PotionEffect> kitPotionEffects = new ArrayList<>();
                             List<String> strPotions = oldPotionsFileConfig.getStringList(kitName);
                             if (strPotions != null) {
                                 for (String strPotion : strPotions) {
@@ -1063,7 +1056,6 @@ public class KingKits extends JavaPlugin {
                                                 try {
                                                     kitPotionEffects.add(new PotionEffect(potionEffectType, potionDuration, potionAmplifier));
                                                 } catch (Exception ex) {
-                                                    continue;
                                                 }
                                             }
                                         }

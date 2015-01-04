@@ -17,8 +17,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public abstract class GuiKingKits implements Listener {
-    public static Map<String, GuiKitMenu> guiKitMenuMap = new HashMap<String, GuiKitMenu>();
-    public static Map<String, GuiPreviewKit> guiPreviewKitMap = new HashMap<String, GuiPreviewKit>();
+    public static Map<String, GuiKitMenu> guiKitMenuMap = new HashMap<>();
+    public static Map<String, GuiPreviewKit> guiPreviewKitMap = new HashMap<>();
 
     private Player player = null;
     private String playerName = null;
@@ -81,7 +81,6 @@ public abstract class GuiKingKits implements Listener {
                 }
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
         }
     }
 
@@ -93,7 +92,7 @@ public abstract class GuiKingKits implements Listener {
         return this.playerName != null ? this.playerName : "";
     }
 
-    protected KingKits getPlugin() {
+    protected final KingKits getPlugin() {
         return KingKits.getInstance();
     }
 

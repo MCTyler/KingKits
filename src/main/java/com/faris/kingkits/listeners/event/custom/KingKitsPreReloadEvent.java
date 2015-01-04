@@ -19,11 +19,13 @@ public class KingKitsPreReloadEvent extends Event implements Cancellable {
 		this.theSender = sender;
 	}
 
-	/** Returns the player **/
+	/** Returns the player
+     * @return  **/
 	public CommandSender getSender() {
 		return this.theSender;
 	}
 
+        @Override
 	public HandlerList getHandlers() {
 		return handlers;
 	}

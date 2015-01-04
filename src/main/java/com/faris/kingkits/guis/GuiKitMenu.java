@@ -56,28 +56,28 @@ public class GuiKitMenu extends GuiKingKits {
 
     @Override
     protected void fillInventory() {
-        for (int i = 0; i < this.guiKitStacks.length; i++) {
+        for (KitStack guiKitStack : this.guiKitStacks) {
             try {
-                ItemStack currentStack = this.guiKitStacks[i].getItemStack();
+                ItemStack currentStack = guiKitStack.getItemStack();
                 if (currentStack != null) {
                     if (currentStack.getType() != Material.AIR) {
                         if (currentStack.getItemMeta() != null) {
                             ItemMeta itemMeta = currentStack.getItemMeta();
-                            ChatColor kitColour = this.getPlayer().hasPermission("kingkits.kits." + this.guiKitStacks[i].getKitName().toLowerCase()) ? ChatColor.GREEN : ChatColor.DARK_RED;
-                            itemMeta.setDisplayName(ChatColor.RESET + "" + kitColour + this.guiKitStacks[i].getKitName());
+                            ChatColor kitColour = this.getPlayer().hasPermission("kingkits.kits." + guiKitStack.getKitName().toLowerCase()) ? ChatColor.GREEN : ChatColor.DARK_RED;
+                            itemMeta.setDisplayName(ChatColor.RESET + "" + kitColour + guiKitStack.getKitName());
                             currentStack.setItemMeta(itemMeta);
                         }
                         this.guiInventory.addItem(currentStack);
                     }
                 }
-            } catch (Exception ex) {
-                continue;
+            }catch (Exception ex) {
             }
         }
     }
 
     /**
      * Returns the kit item stacks *
+     * @return 
      */
     public KitStack[] getKitStacks() {
         return this.guiKitStacks;
@@ -85,13 +85,20 @@ public class GuiKitMenu extends GuiKingKits {
 
     /**
      * Sets the kit item stacks *
+     * @param kitStacks
+     * @return 
      */
     public GuiKitMenu setKitStacks(KitStack[] kitStacks) {
         this.guiKitStacks = kitStacks;
         return this;
     }
 
+    /**
+     *
+     * @param event
+     */
     @EventHandler
+    @Override
     protected void onPlayerClickInventory(InventoryClickEvent event) {
         try {
             if (this.guiInventory != null && event.getInventory() != null && event.getWhoClicked() != null) {
@@ -129,6 +136,7 @@ public class GuiKitMenu extends GuiKingKits {
                                                 if (!guiPreviewKitMap.containsKey(event.getWhoClicked().getName())) {
                                                     final Player player = (Player) event.getWhoClicked();
                                                     player.getServer().getScheduler().runTaskLater(this.getPlugin(), new Runnable() {
+                                                        @Override
                                                         public void run() {
                                                             if (player != null) {
                                                                 if (!guiPreviewKitMap.containsKey(player.getName())) {
@@ -155,7 +163,6 @@ public class GuiKitMenu extends GuiKingKits {
                     this.closeMenu(true, true);
                 }
             }
-            ex.printStackTrace();
         }
     }
 }

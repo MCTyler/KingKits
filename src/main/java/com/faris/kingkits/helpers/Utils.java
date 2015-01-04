@@ -21,11 +21,11 @@ public class Utils {
         try {
             if (directory.exists() && directory.isDirectory()) {
                 File files[] = directory.listFiles();
-                for (int i = 0; i < files.length; i++) {
-                    if (files[i].isDirectory()) {
-                        deleteDirectory(files[i], true);
+                for (File file : files) {
+                    if (file.isDirectory()) {
+                        deleteDirectory(file, true);
                     } else {
-                        files[i].delete();
+                        file.delete();
                     }
                 }
             }
@@ -111,7 +111,7 @@ public class Utils {
     }
 
     public static List<Player> getOnlinePlayers() {
-        List<Player> onlinePlayers = new ArrayList<Player>();
+        List<Player> onlinePlayers = new ArrayList<>();
         for (World world : Bukkit.getWorlds()) {
             if (world != null) onlinePlayers.addAll(world.getPlayers());
         }
@@ -241,7 +241,7 @@ public class Utils {
     }
 
     public static List<String> replaceBukkitColours(List<String> someStrings) {
-        List<String> stringList = new ArrayList<String>();
+        List<String> stringList = new ArrayList<>();
         if (someStrings != null) {
             for (String aString : someStrings) {
                 if (aString != null)
@@ -257,7 +257,7 @@ public class Utils {
     }
 
     public static List<String> replaceChatColours(List<String> someStrings) {
-        List<String> stringList = new ArrayList<String>();
+        List<String> stringList = new ArrayList<>();
         if (someStrings != null) {
             for (String aString : someStrings) {
                 if (aString != null)
@@ -319,6 +319,7 @@ public class Utils {
 
 
     public static Comparator<String> ALPHABETICAL_ORDER = new Comparator<String>() {
+        @Override
         public int compare(String str1, String str2) {
             int res = String.CASE_INSENSITIVE_ORDER.compare(str1, str2);
             if (res == 0) {
@@ -329,7 +330,7 @@ public class Utils {
     };
 
     public static List<String> toLowerCaseList(List<String> normalList) {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         for (String s : normalList)
             list.add(s.toLowerCase());
         return list;
@@ -365,7 +366,7 @@ public class Utils {
                 if (itemStack.hasItemMeta() && itemStack.getItemMeta().hasLore())
                     return itemStack.getItemMeta().getLore();
             }
-            return new ArrayList<String>();
+            return new ArrayList<>();
         }
 
         public static ItemStack setDye(ItemStack itemStack, int itemDye) {

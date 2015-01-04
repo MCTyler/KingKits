@@ -15,6 +15,7 @@ import java.util.Enumeration;
 import java.util.logging.Level;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import org.bukkit.configuration.InvalidConfigurationException;
 
 /**
  * Check dev.bukkit.org to find updates for a given plugin, and download the updates if needed.
@@ -250,7 +251,7 @@ public class BukkitUpdater {
             } else {
                 config.load(updaterConfigFile);
             }
-        } catch (final Exception e) {
+        } catch (final IOException | InvalidConfigurationException e) {
             final String message;
             if (createFile) {
                 message = "The updater could not create configuration at " + updaterFile.getAbsolutePath();
@@ -400,7 +401,7 @@ public class BukkitUpdater {
             final byte[] data = new byte[BukkitUpdater.BYTE_SIZE];
             int count;
             if (this.announce) {
-                this.plugin.getLogger().info("About to download a new update: " + this.versionName);
+                this.plugin.getLogger().log(Level.INFO, "About to download a new update: {0}", this.versionName);
             }
             long downloaded = 0;
             while ((count = in.read(data, 0, BukkitUpdater.BYTE_SIZE)) != -1) {
@@ -408,7 +409,7 @@ public class BukkitUpdater {
                 fout.write(data, 0, count);
                 final int percent = (int) ((downloaded * 100) / fileLength);
                 if (this.announce && ((percent % 10) == 0)) {
-                    this.plugin.getLogger().info("Downloading update: " + percent + "% of " + fileLength + " bytes.");
+                    this.plugin.getLogger().log(Level.INFO, "Downloading update: {0}% of {1} bytes.", new Object[]{percent, fileLength});
                 }
             }
         } catch (Exception ex) {
@@ -454,32 +455,32 @@ public class BukkitUpdater {
         final File fSourceZip = new File(file);
         try {
             final String zipPath = file.substring(0, file.length() - 4);
-            ZipFile zipFile = new ZipFile(fSourceZip);
-            Enumeration<? extends ZipEntry> e = zipFile.entries();
-            while (e.hasMoreElements()) {
-                ZipEntry entry = e.nextElement();
-                File destinationFilePath = new File(zipPath, entry.getName());
-                this.fileIOOrError(destinationFilePath.getParentFile(), destinationFilePath.getParentFile().mkdirs(), true);
-                if (!entry.isDirectory()) {
-                    final BufferedInputStream bis = new BufferedInputStream(zipFile.getInputStream(entry));
-                    int b;
-                    final byte[] buffer = new byte[BukkitUpdater.BYTE_SIZE];
-                    final FileOutputStream fos = new FileOutputStream(destinationFilePath);
-                    final BufferedOutputStream bos = new BufferedOutputStream(fos, BukkitUpdater.BYTE_SIZE);
-                    while ((b = bis.read(buffer, 0, BukkitUpdater.BYTE_SIZE)) != -1) {
-                        bos.write(buffer, 0, b);
-                    }
-                    bos.flush();
-                    bos.close();
-                    bis.close();
-                    final String name = destinationFilePath.getName();
-                    if (name.endsWith(".jar") && this.pluginExists(name)) {
-                        File output = new File(this.updateFolder, name);
-                        this.fileIOOrError(output, destinationFilePath.renameTo(output), true);
+            try (ZipFile zipFile = new ZipFile(fSourceZip)) {
+                Enumeration<? extends ZipEntry> e = zipFile.entries();
+                while (e.hasMoreElements()) {
+                    ZipEntry entry = e.nextElement();
+                    File destinationFilePath = new File(zipPath, entry.getName());
+                    this.fileIOOrError(destinationFilePath.getParentFile(), destinationFilePath.getParentFile().mkdirs(), true);
+                    if (!entry.isDirectory()) {
+                        try (BufferedInputStream bis = new BufferedInputStream(zipFile.getInputStream(entry))) {
+                            int b;
+                            final byte[] buffer = new byte[BukkitUpdater.BYTE_SIZE];
+                            final FileOutputStream fos = new FileOutputStream(destinationFilePath);
+                            try (BufferedOutputStream bos = new BufferedOutputStream(fos, BukkitUpdater.BYTE_SIZE)) {
+                                while ((b = bis.read(buffer, 0, BukkitUpdater.BYTE_SIZE)) != -1) {
+                                    bos.write(buffer, 0, b);
+                                }
+                                bos.flush();
+                            }
+                        }
+                        final String name = destinationFilePath.getName();
+                        if (name.endsWith(".jar") && this.pluginExists(name)) {
+                            File output = new File(this.updateFolder, name);
+                            this.fileIOOrError(output, destinationFilePath.renameTo(output), true);
+                        }
                     }
                 }
             }
-            zipFile.close();
 
             // Move any plugin data folders that were included to the right place, Bukkit won't do this for us.
             moveNewZipFiles(zipPath);
@@ -570,7 +571,7 @@ public class BukkitUpdater {
             } else {
                 // The file's name did not contain the string 'vVersion'
                 final String authorInfo = this.plugin.getDescription().getAuthors().isEmpty() ? "" : " (" + this.plugin.getDescription().getAuthors().get(0) + ")";
-                this.plugin.getLogger().warning("The author of this plugin" + authorInfo + " has misconfigured their Auto Update system");
+                this.plugin.getLogger().log(Level.WARNING, "The author of this plugin{0} has misconfigured their Auto Update system", authorInfo);
                 this.plugin.getLogger().warning("File versions should follow the format 'PluginName vVERSION'");
                 this.plugin.getLogger().warning("Please notify the author of this error.");
                 this.result = BukkitUpdater.UpdateResult.FAIL_NOVERSION;
@@ -665,7 +666,7 @@ public class BukkitUpdater {
             final JSONArray array = (JSONArray) JSONValue.parse(response);
 
             if (array.isEmpty()) {
-                this.plugin.getLogger().warning("The updater could not find any files for the project id " + this.id);
+                this.plugin.getLogger().log(Level.WARNING, "The updater could not find any files for the project id {0}", this.id);
                 this.result = UpdateResult.FAIL_BADID;
                 return false;
             }
@@ -701,14 +702,14 @@ public class BukkitUpdater {
      */
     private void fileIOOrError(File file, boolean result, boolean create) {
         if (!result) {
-            this.plugin.getLogger().severe("The updater could not " + (create ? "create" : "delete") + " file at: " + file.getAbsolutePath());
+            this.plugin.getLogger().log(Level.SEVERE, "The updater could not {0} file at: {1}", new Object[]{create ? "create" : "delete", file.getAbsolutePath()});
         }
     }
 
     private File[] listFilesOrError(File folder) {
         File[] contents = folder.listFiles();
         if (contents == null) {
-            this.plugin.getLogger().severe("The updater could not access files at: " + this.updateFolder.getAbsolutePath());
+            this.plugin.getLogger().log(Level.SEVERE, "The updater could not access files at: {0}", this.updateFolder.getAbsolutePath());
             return new File[0];
         } else {
             return contents;

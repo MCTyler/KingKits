@@ -17,18 +17,29 @@ public abstract class KingCommand implements CommandExecutor {
 
     /**
      * Ignore this method *
+     * @param sender
+     * @param cmd
+     * @param label
+     * @param args
+     * @return 
      */
+    @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         return this.onCommand(sender, cmd.getName(), args);
     }
 
     /**
      * Called when a command is typed by a player or the console *
+     * @param sender
+     * @param command
+     * @param args
+     * @return 
      */
     protected abstract boolean onCommand(CommandSender sender, String command, String[] args);
 
     /**
      * Returns the plugin instance *
+     * @return 
      */
     protected KingKits getPlugin() {
         return this.plugin;
@@ -36,6 +47,8 @@ public abstract class KingCommand implements CommandExecutor {
 
     /**
      * Returns if a sender is not a player *
+     * @param sender
+     * @return 
      */
     protected boolean isConsole(CommandSender sender) {
         if (sender != null) {
@@ -47,6 +60,8 @@ public abstract class KingCommand implements CommandExecutor {
 
     /**
      * Returns if a string is a boolean *
+     * @param booleanString
+     * @return 
      */
     protected boolean isBoolean(String booleanString) {
         return booleanString.equalsIgnoreCase("true") || booleanString.equalsIgnoreCase("false");
@@ -54,6 +69,8 @@ public abstract class KingCommand implements CommandExecutor {
 
     /**
      * Returns if a string is a double *
+     * @param doubleString
+     * @return 
      */
     protected boolean isDouble(String doubleString) {
         try {
@@ -66,6 +83,8 @@ public abstract class KingCommand implements CommandExecutor {
 
     /**
      * Returns if a string is numeric *
+     * @param numericString
+     * @return 
      */
     protected boolean isNumeric(String numericString) {
         try {
@@ -78,6 +97,8 @@ public abstract class KingCommand implements CommandExecutor {
 
     /**
      * Returns a string with the real colours *
+     * @param message
+     * @return 
      */
     protected String r(String message) {
         return Utils.replaceChatColour(message);
@@ -85,6 +106,7 @@ public abstract class KingCommand implements CommandExecutor {
 
     /**
      * Send the "no access" message to a player/console *
+     * @param sender
      */
     protected void sendNoAccess(CommandSender sender) {
         Lang.sendMessage(sender, Lang.COMMAND_GEN_NO_PERMISSION);

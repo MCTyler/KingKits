@@ -29,8 +29,9 @@ public class UUIDFetcher implements Callable<Map<String, UUID>> {
 		this(names, true);
 	}
 
+        @Override
 	public Map<String, UUID> call() throws Exception {
-		Map<String, UUID> uuidMap = new HashMap<String, UUID>();
+		Map<String, UUID> uuidMap = new HashMap<>();
 		int requests = (int) Math.ceil(names.size() / PROFILES_PER_REQUEST);
 		for (int i = 0; i < requests; i++) {
 			HttpURLConnection connection = createConnection();
@@ -52,10 +53,10 @@ public class UUIDFetcher implements Callable<Map<String, UUID>> {
 	}
 
 	private static void writeBody(HttpURLConnection connection, String body) throws Exception {
-		OutputStream stream = connection.getOutputStream();
-		stream.write(body.getBytes());
-		stream.flush();
-		stream.close();
+            try (OutputStream stream = connection.getOutputStream()) {
+                stream.write(body.getBytes());
+                stream.flush();
+            }
 	}
 
 	private static HttpURLConnection createConnection() throws Exception {

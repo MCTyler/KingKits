@@ -13,8 +13,8 @@ public class PlayerCreateKitEvent extends PlayerEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
 
     private String kitName = "";
-    private Map<Integer, ItemStack> kitContents = new HashMap<Integer, ItemStack>();
-    private List<ItemStack> armourContents = new ArrayList<ItemStack>();
+    private Map<Integer, ItemStack> kitContents = new HashMap<>();
+    private List<ItemStack> armourContents = new ArrayList<>();
 
     private boolean isCancelled = false;
 
@@ -24,6 +24,7 @@ public class PlayerCreateKitEvent extends PlayerEvent implements Cancellable {
      * @param player - The player.
      * @param kitName - The new kit.
      * @param newKitItems - The kit items.
+     * @param armourContents
      */
     public PlayerCreateKitEvent(Player player, String kitName, final List<ItemStack> newKitItems, List<ItemStack> armourContents) {
         this(player, kitName, new HashMap<Integer, ItemStack>() {
@@ -42,6 +43,7 @@ public class PlayerCreateKitEvent extends PlayerEvent implements Cancellable {
      * @param player - The player.
      * @param kitName - The new kit.
      * @param newKitItems - The kit items.
+     * @param armourContents
      */
     public PlayerCreateKitEvent(Player player, String kitName, Map<Integer, ItemStack> newKitItems, List<ItemStack> armourContents) {
         super(player);
@@ -52,6 +54,7 @@ public class PlayerCreateKitEvent extends PlayerEvent implements Cancellable {
 
     /**
      * Returns the kit's name *
+     * @return 
      */
     public String getKit() {
         return this.kitName;
@@ -59,6 +62,7 @@ public class PlayerCreateKitEvent extends PlayerEvent implements Cancellable {
 
     /**
      * Returns an unmodifiable List of armour in the new kit *
+     * @return 
      */
     public List<ItemStack> getKitArmour() {
         return Collections.unmodifiableList(this.armourContents);
@@ -66,9 +70,10 @@ public class PlayerCreateKitEvent extends PlayerEvent implements Cancellable {
 
     /**
      * Returns an unmodifiable List of items in the new kit *
+     * @return 
      */
     public List<ItemStack> getKitContents() {
-        return new ArrayList<ItemStack>(this.kitContents.values());
+        return new ArrayList<>(this.kitContents.values());
     }
 
     public Map<Integer, ItemStack> getKitContentsWithSlots() {
@@ -77,6 +82,7 @@ public class PlayerCreateKitEvent extends PlayerEvent implements Cancellable {
 
     /**
      * Set the item contents of the new kit *
+     * @param armourContents
      */
     public void setArmourContents(List<ItemStack> armourContents) {
         if (armourContents != null) this.armourContents = armourContents;
@@ -84,10 +90,11 @@ public class PlayerCreateKitEvent extends PlayerEvent implements Cancellable {
 
     /**
      * Set the item contents of the new kit *
+     * @param kitContents
      */
     public void setKitContents(List<ItemStack> kitContents) {
         if (kitContents != null) {
-            this.kitContents = new HashMap<Integer, ItemStack>();
+            this.kitContents = new HashMap<>();
             for (int i = 0; i < kitContents.size(); i++) {
                 ItemStack kitContent = kitContents.get(i);
                 this.kitContents.put(i, kitContent == null ? new ItemStack(Material.AIR) : kitContent);
@@ -97,11 +104,17 @@ public class PlayerCreateKitEvent extends PlayerEvent implements Cancellable {
 
     /**
      * Set the item contents of the new kit *
+     * @param kitContents
      */
     public void setKitContents(Map<Integer, ItemStack> kitContents) {
         if (kitContents != null) this.kitContents = kitContents;
     }
 
+    /**
+     *
+     * @return
+     */
+    @Override
     public HandlerList getHandlers() {
         return handlers;
     }

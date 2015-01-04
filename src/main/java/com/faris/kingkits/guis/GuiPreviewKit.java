@@ -71,7 +71,12 @@ public class GuiPreviewKit extends GuiKingKits {
         this.guiInventory.setItem(this.guiInventory.getSize() - 1, backItem);
     }
 
+    /**
+     *
+     * @param event
+     */
     @EventHandler
+    @Override
     protected void onPlayerClickInventory(InventoryClickEvent event) {
         try {
             if (event.getWhoClicked().getName().equals(this.getPlayerName())) {
@@ -82,6 +87,7 @@ public class GuiPreviewKit extends GuiKingKits {
                         this.closeMenu(true, true);
                         if (!guiKitMenuMap.containsKey(event.getWhoClicked().getName())) {
                             player.getServer().getScheduler().runTaskLater(this.getPlugin(), new Runnable() {
+                                @Override
                                 public void run() {
                                     if (player != null) {
                                         PvPKits.showKitMenu(player);
@@ -92,6 +98,7 @@ public class GuiPreviewKit extends GuiKingKits {
                     } else {
                         player.getServer().getScheduler().runTaskLater(this.getPlugin(), new Runnable() {
                             @SuppressWarnings("deprecation")
+                            @Override
                             public void run() {
                                 if (player != null && player.isOnline()) player.updateInventory();
                             }
@@ -100,11 +107,15 @@ public class GuiPreviewKit extends GuiKingKits {
                 }
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
         }
     }
 
+    /**
+     *
+     * @param event
+     */
     @EventHandler(priority = EventPriority.LOW)
+    @Override
     protected void onPlayerCloseInventory(InventoryCloseEvent event) {
         try {
             if (this.guiInventory != null && event.getInventory() != null) {

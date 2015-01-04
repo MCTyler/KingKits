@@ -44,7 +44,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.zip.GZIPOutputStream;
 
-public class Metrics {
+public final class Metrics {
 
     /**
      * The current revision number
@@ -192,6 +192,7 @@ public class Metrics {
 
                 private boolean firstPost = true;
 
+                @Override
                 public void run() {
                     try {
                         // This has to be synchronized or it can collide with the disable method.
@@ -217,7 +218,7 @@ public class Metrics {
                         firstPost = false;
                     } catch (IOException e) {
                         if (debug) {
-                            Bukkit.getLogger().log(Level.INFO, "[Metrics] " + e.getMessage());
+                            Bukkit.getLogger().log(Level.INFO, "[Metrics] {0}", e.getMessage());
                         }
                     }
                 }
@@ -237,14 +238,9 @@ public class Metrics {
             try {
                 // Reload the metrics file
                 configuration.load(getConfigFile());
-            } catch (IOException ex) {
+            } catch (IOException | InvalidConfigurationException ex) {
                 if (debug) {
-                    Bukkit.getLogger().log(Level.INFO, "[Metrics] " + ex.getMessage());
-                }
-                return true;
-            } catch (InvalidConfigurationException ex) {
-                if (debug) {
-                    Bukkit.getLogger().log(Level.INFO, "[Metrics] " + ex.getMessage());
+                    Bukkit.getLogger().log(Level.INFO, "[Metrics] {0}", ex.getMessage());
                 }
                 return true;
             }
@@ -435,17 +431,17 @@ public class Metrics {
             System.out.println("[Metrics] Prepared request for " + pluginName + " uncompressed=" + uncompressed.length + " compressed=" + compressed.length);
         }
 
-        // Write the data
-        OutputStream os = connection.getOutputStream();
-        os.write(compressed);
-        os.flush();
-
-        // Now read the response
-        final BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-        String response = reader.readLine();
-
-        // close resources
-        os.close();
+        final BufferedReader reader;
+        String response;
+        try ( // Write the data
+                OutputStream os = connection.getOutputStream()) {
+            os.write(compressed);
+            os.flush();
+            // Now read the response
+            reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            response = reader.readLine();
+            // close resources
+        }
         reader.close();
 
         if (response == null || response.startsWith("ERR") || response.startsWith("7")) {
@@ -488,7 +484,6 @@ public class Metrics {
             gzos = new GZIPOutputStream(baos);
             gzos.write(input.getBytes("UTF-8"));
         } catch (IOException e) {
-            e.printStackTrace();
         } finally {
             if (gzos != null) try {
                 gzos.close();
@@ -581,7 +576,7 @@ public class Metrics {
                 default:
                     if (chr < ' ') {
                         String t = "000" + Integer.toHexString(chr);
-                        builder.append("\\u" + t.substring(t.length() - 4));
+                StringBuilder append = builder.append("\\u").append(t.substring(t.length() - 4));
                     } else {
                         builder.append(chr);
                     }
@@ -617,7 +612,7 @@ public class Metrics {
         /**
          * The set of plotters that are contained within this graph
          */
-        private final Set<Plotter> plotters = new LinkedHashSet<Plotter>();
+        private final Set<Plotter> plotters = new LinkedHashSet<>();
 
         private Graph(final String name) {
             this.name = name;

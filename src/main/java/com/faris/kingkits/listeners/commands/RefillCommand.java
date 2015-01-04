@@ -98,9 +98,11 @@ public class RefillCommand extends PlayerCommand {
                                                     int bowlsGiven = 0;
                                                     ItemStack[] itemContents = p.getInventory().getContents();
                                                     int invMaxSize = p.getInventory().getSize();
-                                                    for (int i = 0; i < itemContents.length; i++) {
-                                                        if (itemContents[i] != null) {
-                                                            if (itemContents[i].getType() != Material.AIR) invSize++;
+                                                    for (ItemStack itemContent : itemContents) {
+                                                        if (itemContent != null) {
+                                                            if (itemContent.getType() != Material.AIR) {
+                                                                invSize++;
+                                                            }
                                                         }
                                                     }
                                                     for (int i = 0; i < bowlAmount; i++) {

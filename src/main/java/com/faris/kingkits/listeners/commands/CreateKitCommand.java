@@ -68,8 +68,8 @@ public class CreateKitCommand extends PlayerCommand {
                                     }
                                 }
 
-                                Map<Integer, ItemStack> itemsInInv = new HashMap<Integer, ItemStack>();
-                                List<ItemStack> armourInInv = new ArrayList<ItemStack>();
+                                Map<Integer, ItemStack> itemsInInv = new HashMap<>();
+                                List<ItemStack> armourInInv = new ArrayList<>();
                                 ItemStack[] pContents = p.getInventory().getContents();
                                 if (pContents == null) pContents = new ItemStack[p.getInventory().getSize()];
                                 for (int i = 0; i < p.getInventory().getSize(); i++) {

@@ -113,7 +113,6 @@ public class SetKit {
                                     }
                                 }
                             } catch (Exception ex) {
-                                continue;
                             }
                         }
                         List<ItemStack> armourItems = playerKitEvent.getKitArmour();
@@ -155,7 +154,7 @@ public class SetKit {
                             plugin.playerKits.put(player.getName(), newKit.getRealName());
                         }
                         plugin.usingKits.put(player.getName(), newKit.getRealName());
-                        if (plugin.configValues.customMessages != "" && plugin.configValues.customMessages != "''")
+                        if (!"".equals(plugin.configValues.customMessages) && !"''".equals(plugin.configValues.customMessages))
                             player.sendMessage(r(plugin.configValues.customMessages).replace("<player>", player.getName()).replace("<displayname>", player.getDisplayName()).replace("<kit>", kitName));
                         if (plugin.configValues.kitParticleEffects) {
                             player.playEffect(player.getLocation().add(0, 1, 0), Effect.ENDER_SIGNAL, (byte) 0);

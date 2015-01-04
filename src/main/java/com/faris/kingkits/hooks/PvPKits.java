@@ -15,12 +15,14 @@ import org.bukkit.permissions.Permission;
 import org.bukkit.potion.PotionEffect;
 
 import java.util.*;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class PvPKits {
 
     /**
      * Get KingKit's logger.
+     * @return 
      */
     public static Logger getPluginLogger() {
         return KingKits.getInstance().getLogger();
@@ -30,6 +32,7 @@ public class PvPKits {
      * Returns if a player has a kit.
      *
      * @param player The player to check.
+     * @return 
      */
     public static boolean hasKit(Player player) {
         if (player == null) return false;
@@ -40,6 +43,7 @@ public class PvPKits {
      * Returns if a player has a kit.
      *
      * @param player The player to check.
+     * @return 
      */
     public static boolean hasKit(String player) {
         return KingKits.getInstance() != null && KingKits.getInstance().usingKits != null && KingKits.getInstance().usingKits.get(player) != null;
@@ -50,6 +54,7 @@ public class PvPKits {
      *
      * @param player The player to check.
      * @param ignoreOPs Input true if you should ignore OPs.
+     * @return 
      */
     public static boolean hasKit(Player player, boolean ignoreOPs) {
         if (player == null) return false;
@@ -61,6 +66,7 @@ public class PvPKits {
      *
      * @param player The player to check.
      * @param ignoreOPs Input true if you should ignore OPs.
+     * @return 
      */
     public static boolean hasKit(String player, boolean ignoreOPs) {
         if (ignoreOPs) {
@@ -74,6 +80,7 @@ public class PvPKits {
      * Get player's kit : Returns null if the player is null or doesn't have a kit.
      *
      * @param player The player to get the kit name from.
+     * @return 
      */
     public static String getKit(Player player) {
         if (player == null) return null;
@@ -84,6 +91,7 @@ public class PvPKits {
      * Get player's kit : Returns null if the player doesn't have a kit.
      *
      * @param player The player to get the kit name from.
+     * @return 
      */
     public static String getKit(String player) {
         return KingKits.getInstance() != null && KingKits.getInstance().usingKits != null ? KingKits.getInstance().usingKits.get(player) : null;
@@ -111,17 +119,17 @@ public class PvPKits {
      * @return A list of registered kits.
      */
     public static List<Kit> getKits() {
-        return new ArrayList<Kit>(KingKits.getInstance().kitList.values());
+        return new ArrayList<>(KingKits.getInstance().kitList.values());
     }
 
     /**
      * Get players using a specific kit : Returns an empty list if the kit doesn't exist or no players are using that kit.
      *
      * @param kitName The kit to obtain the list of players.
-     */
+     * @return    */
     public static List<String> getPlayersUsingKit(String kitName) {
-        List<String> playersUsingKit = new ArrayList<String>();
-        List<String> playersInKitMap = new ArrayList<String>(KingKits.getInstance().usingKits.keySet());
+        List<String> playersUsingKit = new ArrayList<>();
+        List<String> playersInKitMap = new ArrayList<>(KingKits.getInstance().usingKits.keySet());
         for (int pos = 0; pos < KingKits.getInstance().usingKits.size(); pos++) {
             String kit = KingKits.getInstance().usingKits.get(pos);
             if (kit.equalsIgnoreCase(kitName)) {
@@ -133,6 +141,7 @@ public class PvPKits {
 
     /**
      * Get players using and their kits : Returns an empty map if no one is using a kit.
+     * @return 
      */
     public static Map<String, String> getPlayersAndKits() {
         return Collections.unmodifiableMap(KingKits.getInstance().usingKits);
@@ -143,9 +152,10 @@ public class PvPKits {
      * Note: Case sensitive.
      *
      * @param kitName The kit name to check.
+     * @return 
      */
     public static boolean kitExists(String kitName) {
-        List<String> kitList = new ArrayList<String>();
+        List<String> kitList = new ArrayList<>();
         if (KingKits.getInstance().getKitsConfig().contains("Kits"))
             kitList = KingKits.getInstance().getKitList();
         List<String> kitListLC = Utils.toLowerCaseList(kitList);
@@ -228,7 +238,7 @@ public class PvPKits {
      * Returns -1 if the player doesn't exist in the scores configuration or the player is null.
      *
      * @param player The player who's score is meant to be returned.
-     */
+     * @return */
     public static int getScore(Player player) {
         if (player == null) return -1;
         return getScore(player.getUniqueId().toString());
@@ -238,6 +248,7 @@ public class PvPKits {
      * Returns the target player's score.
      *
      * @param playerUUID The player who's score is meant to be returned. Returns -1 if the player doesn't exist in the scores configuration.
+     * @return 
      */
     public static int getScore(String playerUUID) {
         UUID uuid = UUID.fromString(playerUUID);
@@ -251,6 +262,7 @@ public class PvPKits {
     /**
      * Returns a Map of all the player's scores and their usernames.
      * Note: The return type of the map is (String, Object) which is actually a Map of (String, Integer), just cast all the values to integer.
+     * @return 
      */
     public static Map<UUID, Object> getScores() {
         return KingKits.getInstance().playerScores;
@@ -282,7 +294,7 @@ public class PvPKits {
     }
 
     public static boolean createKit(String kitName, List<ItemStack> itemsInKit, List<PotionEffect> potionEffects, ItemStack guiItem, double costOfKit) {
-        Map<Integer, ItemStack> mapItemsInKit = new HashMap<Integer, ItemStack>();
+        Map<Integer, ItemStack> mapItemsInKit = new HashMap<>();
         for (int i = 0; i < itemsInKit.size(); i++) {
             mapItemsInKit.put(i, itemsInKit.get(i));
         }
@@ -298,6 +310,7 @@ public class PvPKits {
      * @param potionEffects The potion effects in the kit. Set to null if there are none.
      * @param guiItem The item to be shown in the GUI Inventory when using GUI mode. Set to null if you want it to be a diamond sword.
      * @param costOfKit The cost of the kit.
+     * @return 
      */
     public static boolean createKit(String kitName, Map<Integer, ItemStack> itemsInKit, List<PotionEffect> potionEffects, ItemStack guiItem, double costOfKit) {
         if (KingKits.getInstance() == null) return false;
@@ -320,7 +333,7 @@ public class PvPKits {
             try {
                 KingKits.getInstance().getServer().getPluginManager().addPermission(new Permission("kingkits.kits." + kitName.toLowerCase()));
             } catch (Exception ex) {
-                getPluginLogger().warning(ex.getClass().getSimpleName() + " error: " + ex.getMessage());
+                getPluginLogger().log(Level.WARNING, "{0} error: {1}", new Object[]{ex.getClass().getSimpleName(), ex.getMessage()});
             }
             return true;
         }
@@ -332,6 +345,7 @@ public class PvPKits {
      * Returns if the deletion of the kit is successful.
      *
      * @param kitName The name of the kit to be deleted.
+     * @return 
      */
     public static boolean deleteKit(String kitName) {
         List<String> kits = KingKits.getInstance() != null ? KingKits.getInstance().getConfigKitList() : new ArrayList<String>();
@@ -351,6 +365,7 @@ public class PvPKits {
      * Returns 0 if the player doesn't exist, is null or has no killstreak.
      *
      * @param player The player.
+     * @return 
      */
     public static long getKillstreak(Player player) {
         if (player == null) return 0L;
@@ -362,6 +377,7 @@ public class PvPKits {
      * Returns 0 if the player doesn't exist or has no killstreak.
      *
      * @param player The name of the player.
+     * @return 
      */
     public static long getKillstreak(String player) {
         if (KingKits.getInstance() != null && KingKits.getInstance().playerKillstreaks.containsKey(player))
@@ -386,13 +402,13 @@ public class PvPKits {
      */
     public static void showKitMenu(Player player, boolean ignoreChecks) {
         if (KingKits.getInstance() != null && (!ignoreChecks ? KingKits.getInstance().configValues.kitListMode.equalsIgnoreCase("Gui") || KingKits.getInstance().configValues.kitListMode.equalsIgnoreCase("Menu") : true)) {
-            List<Kit> kitValues = new ArrayList<Kit>();
+            List<Kit> kitValues = new ArrayList<>();
             if (KingKits.getInstance().configValues.sortAlphabetically) {
-                List<String> kitNames = new ArrayList<String>(KingKits.getInstance().kitList.keySet());
+                List<String> kitNames = new ArrayList<>(KingKits.getInstance().kitList.keySet());
                 Collections.sort(kitNames, Utils.ALPHABETICAL_ORDER);
 
-                for (int index = 0; index < kitNames.size(); index++) {
-                    Kit kit = KingKits.getInstance().kitList.get(kitNames.get(index));
+                for (String kitName : kitNames) {
+                    Kit kit = KingKits.getInstance().kitList.get(kitName);
                     if (kit != null) {
                         if (!KingKits.getInstance().configValues.kitListPermissions) {
                             if (!player.hasPermission("kingkits.kits." + kit.getRealName().toLowerCase())) continue;
